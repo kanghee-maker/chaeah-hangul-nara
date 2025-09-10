@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 
 interface Fruit {
@@ -170,7 +170,7 @@ export default function Game1() {
               </div>
             ) : (
               <div className="text-2xl text-red-600 font-bold">
-                아쉬워요! 정답은 "{currentFruit.name}"이에요! 😊
+                아쉬워요! 정답은 &ldquo;{currentFruit.name}&rdquo;이에요! 😊
               </div>
             )}
           </div>
