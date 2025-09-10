@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
 interface Item {
   emoji: string;
@@ -158,7 +160,15 @@ const shuffleArray = (array: string[]) => {
   return shuffled;
 };
 
-export default function Game1() {
+function Game1Content() {
+  const searchParams = useSearchParams();
+  const selectedCategory = searchParams.get('category');
+  
+  // 카테고리에 따라 아이템 필터링
+  const filteredItems = selectedCategory && selectedCategory !== '모든 카테고리' 
+    ? allItems.filter(item => item.category === selectedCategory)
+    : allItems;
+
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
@@ -166,12 +176,14 @@ export default function Game1() {
   const [gameComplete, setGameComplete] = useState(false);
   const [shuffledOptions, setShuffledOptions] = useState<string[]>([]);
 
-  const currentItem = allItems[currentItemIndex];
+  const currentItem = filteredItems[currentItemIndex];
 
   // 컴포넌트 마운트 시 선택지 초기화
   useEffect(() => {
-    setShuffledOptions(shuffleArray(currentItem.options));
-  }, [currentItem.options]);
+    if (currentItem) {
+      setShuffledOptions(shuffleArray(currentItem.options));
+    }
+  }, [currentItem]);
 
   const handleAnswerSelect = (answer: string) => {
     if (showResult) return;
@@ -185,13 +197,13 @@ export default function Game1() {
   };
 
   const handleNext = () => {
-    if (currentItemIndex < allItems.length - 1) {
+    if (currentItemIndex < filteredItems.length - 1) {
       const nextIndex = currentItemIndex + 1;
       setCurrentItemIndex(nextIndex);
       setSelectedAnswer(null);
       setShowResult(false);
       // 다음 문제의 선택지를 섞음
-      setShuffledOptions(shuffleArray(allItems[nextIndex].options));
+      setShuffledOptions(shuffleArray(filteredItems[nextIndex].options));
     } else {
       setGameComplete(true);
     }
@@ -204,7 +216,9 @@ export default function Game1() {
     setScore(0);
     setGameComplete(false);
     // 첫 번째 문제의 선택지를 섞음
-    setShuffledOptions(shuffleArray(allItems[0].options));
+    if (filteredItems.length > 0) {
+      setShuffledOptions(shuffleArray(filteredItems[0].options));
+    }
   };
 
   if (gameComplete) {
@@ -240,12 +254,12 @@ export default function Game1() {
       {/* 진행 상황 */}
       <div className="mb-6 text-center">
         <div className="text-lg text-purple-700 font-medium">
-          {currentItemIndex + 1} / {allItems.length}
+          {currentItemIndex + 1} / {filteredItems.length}
         </div>
         <div className="w-64 bg-purple-200 rounded-full h-3 mt-2">
           <div 
             className="bg-gradient-to-r from-pink-400 to-purple-500 h-3 rounded-full transition-all duration-300"
-            style={{ width: `${((currentItemIndex + 1) / allItems.length) * 100}%` }}
+            style={{ width: `${((currentItemIndex + 1) / filteredItems.length) * 100}%` }}
           ></div>
         </div>
       </div>
@@ -309,19 +323,40 @@ export default function Game1() {
             onClick={handleNext}
             className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold py-4 px-8 rounded-2xl text-lg shadow-lg transform hover:scale-105 transition-all duration-200"
           >
-            {currentItemIndex < allItems.length - 1 ? '다음 문제' : '결과 보기'}
+            {currentItemIndex < filteredItems.length - 1 ? '다음 문제' : '결과 보기'}
           </button>
         )}
       </div>
 
-      {/* 홈 버튼 */}
-      <Link
-        href="/"
-        className="mt-6 text-purple-600 hover:text-purple-800 font-medium text-lg"
-      >
-        ← 홈으로 가기
-      </Link>
+      {/* 네비게이션 버튼들 */}
+      <div className="mt-6 flex gap-4">
+        <Link
+          href="/category-select?game=1"
+          className="text-purple-600 hover:text-purple-800 font-medium text-lg"
+        >
+          ← 카테고리 선택
+        </Link>
+        <span className="text-purple-400">|</span>
+        <Link
+          href="/"
+          className="text-purple-600 hover:text-purple-800 font-medium text-lg"
+        >
+          홈으로 가기
+        </Link>
+      </div>
     </div>
+  );
+}
+
+export default function Game1() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-2xl">로딩 중...</div>
+      </div>
+    }>
+      <Game1Content />
+    </Suspense>
   );
 }
 

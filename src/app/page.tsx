@@ -33,7 +33,7 @@ export default function Home() {
       {/* 메뉴 버튼들 */}
       <div className="flex flex-col gap-6 w-full max-w-md">
         <Link 
-          href="/game1"
+          href="/category-select?game=1"
           className="bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 text-white font-bold py-6 px-8 rounded-2xl text-xl shadow-lg transform hover:scale-105 transition-all duration-200 text-center"
         >
           🎯 이름 맞히기
@@ -43,7 +43,7 @@ export default function Home() {
         </Link>
 
         <Link 
-          href="/game2"
+          href="/category-select?game=2"
           className="bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-bold py-6 px-8 rounded-2xl text-xl shadow-lg transform hover:scale-105 transition-all duration-200 text-center"
         >
           ✏️ 빈칸 채우기
