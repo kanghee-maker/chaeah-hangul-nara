@@ -36,9 +36,9 @@ export default function Home() {
           href="/game1"
           className="bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 text-white font-bold py-6 px-8 rounded-2xl text-xl shadow-lg transform hover:scale-105 transition-all duration-200 text-center"
         >
-          🍓 과일 이름 맞히기
+          🎯 이름 맞히기
           <div className="text-sm font-normal mt-1 opacity-90">
-            과일 그림을 보고 맞는 이름을 찾아보세요!
+            🍎 과일 🚗 교통수단 🌈 색깔 이름을 맞혀보세요!
           </div>
         </Link>
 
@@ -46,9 +46,9 @@ export default function Home() {
           href="/game2"
           className="bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-bold py-6 px-8 rounded-2xl text-xl shadow-lg transform hover:scale-105 transition-all duration-200 text-center"
         >
-          🍌 빈칸 채우기
+          ✏️ 빈칸 채우기
           <div className="text-sm font-normal mt-1 opacity-90">
-            글자의 일부를 보고 빈칸을 채워보세요!
+            다양한 단어의 빈칸을 채워보세요!
           </div>
         </Link>
       </div>

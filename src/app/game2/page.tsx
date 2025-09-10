@@ -1,60 +1,176 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-interface FruitPuzzle {
+interface ItemPuzzle {
   emoji: string;
   name: string;
   display: string; // 빈칸이 포함된 표시
   missingChar: string; // 빈칸에 들어갈 글자
   options: string[]; // 선택지
+  category: string;
 }
 
-const fruitPuzzles: FruitPuzzle[] = [
+const itemPuzzles: ItemPuzzle[] = [
+  // 과일
   {
     emoji: '🍎',
     name: '사과',
     display: '사_',
     missingChar: '과',
-    options: ['과', '나', '기']
+    options: ['과', '나', '기'],
+    category: '과일'
   },
   {
     emoji: '🍌',
     name: '바나나',
     display: '바_나',
     missingChar: '나',
-    options: ['나', '과', '기']
+    options: ['나', '과', '기'],
+    category: '과일'
   },
   {
     emoji: '🍓',
     name: '딸기',
     display: '딸_',
     missingChar: '기',
-    options: ['기', '나', '과']
+    options: ['기', '나', '과'],
+    category: '과일'
   },
   {
     emoji: '🍇',
     name: '포도',
     display: '포_',
     missingChar: '도',
-    options: ['도', '나', '기']
+    options: ['도', '나', '기'],
+    category: '과일'
   },
   {
     emoji: '🍊',
     name: '오렌지',
     display: '오_지',
     missingChar: '렌',
-    options: ['렌', '나', '기']
+    options: ['렌', '나', '기'],
+    category: '과일'
   },
   {
     emoji: '🍑',
     name: '복숭아',
     display: '복_아',
     missingChar: '숭',
-    options: ['숭', '나', '기']
+    options: ['숭', '나', '기'],
+    category: '과일'
+  },
+  // 교통수단
+  {
+    emoji: '🚗',
+    name: '자동차',
+    display: '자_차',
+    missingChar: '동',
+    options: ['동', '기', '나'],
+    category: '교통수단'
+  },
+  {
+    emoji: '🚌',
+    name: '버스',
+    display: '버_',
+    missingChar: '스',
+    options: ['스', '동', '나'],
+    category: '교통수단'
+  },
+  {
+    emoji: '🚂',
+    name: '기차',
+    display: '기_',
+    missingChar: '차',
+    options: ['차', '스', '동'],
+    category: '교통수단'
+  },
+  {
+    emoji: '✈️',
+    name: '비행기',
+    display: '비_기',
+    missingChar: '행',
+    options: ['행', '차', '스'],
+    category: '교통수단'
+  },
+  {
+    emoji: '🚢',
+    name: '배',
+    display: '_',
+    missingChar: '배',
+    options: ['배', '행', '차'],
+    category: '교통수단'
+  },
+  {
+    emoji: '🚲',
+    name: '자전거',
+    display: '자_거',
+    missingChar: '전',
+    options: ['전', '배', '행'],
+    category: '교통수단'
+  },
+  // 색깔
+  {
+    emoji: '❤️',
+    name: '빨간색',
+    display: '빨_색',
+    missingChar: '간',
+    options: ['간', '전', '배'],
+    category: '색깔'
+  },
+  {
+    emoji: '💙',
+    name: '파란색',
+    display: '파_색',
+    missingChar: '란',
+    options: ['란', '간', '전'],
+    category: '색깔'
+  },
+  {
+    emoji: '💛',
+    name: '노란색',
+    display: '노_색',
+    missingChar: '란',
+    options: ['란', '간', '전'],
+    category: '색깔'
+  },
+  {
+    emoji: '💚',
+    name: '초록색',
+    display: '초_색',
+    missingChar: '록',
+    options: ['록', '란', '간'],
+    category: '색깔'
+  },
+  {
+    emoji: '💜',
+    name: '보라색',
+    display: '보_색',
+    missingChar: '라',
+    options: ['라', '록', '란'],
+    category: '색깔'
+  },
+  {
+    emoji: '🤍',
+    name: '하얀색',
+    display: '하_색',
+    missingChar: '얀',
+    options: ['얀', '라', '록'],
+    category: '색깔'
   }
 ];
+
+// 배열을 랜덤하게 섞는 함수
+const shuffleArray = (array: string[]) => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
 
 export default function Game2() {
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
@@ -62,8 +178,14 @@ export default function Game2() {
   const [showResult, setShowResult] = useState(false);
   const [score, setScore] = useState(0);
   const [gameComplete, setGameComplete] = useState(false);
+  const [shuffledOptions, setShuffledOptions] = useState<string[]>([]);
 
-  const currentPuzzle = fruitPuzzles[currentPuzzleIndex];
+  const currentPuzzle = itemPuzzles[currentPuzzleIndex];
+
+  // 컴포넌트 마운트 시 선택지 초기화
+  useEffect(() => {
+    setShuffledOptions(shuffleArray(currentPuzzle.options));
+  }, [currentPuzzle.options]);
 
   const handleAnswerSelect = (answer: string) => {
     if (showResult) return;
@@ -77,10 +199,13 @@ export default function Game2() {
   };
 
   const handleNext = () => {
-    if (currentPuzzleIndex < fruitPuzzles.length - 1) {
-      setCurrentPuzzleIndex(currentPuzzleIndex + 1);
+    if (currentPuzzleIndex < itemPuzzles.length - 1) {
+      const nextIndex = currentPuzzleIndex + 1;
+      setCurrentPuzzleIndex(nextIndex);
       setSelectedAnswer(null);
       setShowResult(false);
+      // 다음 문제의 선택지를 섞음
+      setShuffledOptions(shuffleArray(itemPuzzles[nextIndex].options));
     } else {
       setGameComplete(true);
     }
@@ -92,6 +217,8 @@ export default function Game2() {
     setShowResult(false);
     setScore(0);
     setGameComplete(false);
+    // 첫 번째 문제의 선택지를 섞음
+    setShuffledOptions(shuffleArray(itemPuzzles[0].options));
   };
 
   const renderDisplayText = () => {
@@ -164,23 +291,23 @@ export default function Game2() {
       {/* 진행 상황 */}
       <div className="mb-6 text-center">
         <div className="text-lg text-blue-700 font-medium">
-          {currentPuzzleIndex + 1} / {fruitPuzzles.length}
+          {currentPuzzleIndex + 1} / {itemPuzzles.length}
         </div>
         <div className="w-64 bg-blue-200 rounded-full h-3 mt-2">
           <div 
             className="bg-gradient-to-r from-green-400 to-blue-500 h-3 rounded-full transition-all duration-300"
-            style={{ width: `${((currentPuzzleIndex + 1) / fruitPuzzles.length) * 100}%` }}
+            style={{ width: `${((currentPuzzleIndex + 1) / itemPuzzles.length) * 100}%` }}
           ></div>
         </div>
       </div>
 
       {/* 게임 영역 */}
       <div className="bg-white rounded-3xl p-8 shadow-2xl text-center max-w-lg w-full">
-        {/* 과일 그림 */}
+        {/* 아이템 그림 */}
         <div className="mb-8">
           <div className="text-8xl mb-4">{currentPuzzle.emoji}</div>
           <p className="text-xl text-blue-600 font-medium mb-4">
-            빈칸에 들어갈 글자를 찾아보세요!
+            이 {currentPuzzle.category}의 빈칸에 들어갈 글자를 찾아보세요!
           </p>
         </div>
 
@@ -193,7 +320,7 @@ export default function Game2() {
 
         {/* 선택지 */}
         <div className="grid grid-cols-3 gap-4 mb-6">
-          {currentPuzzle.options.map((option, index) => {
+          {shuffledOptions.map((option, index) => {
             let buttonClass = "bg-gradient-to-r from-blue-400 to-green-500 hover:from-blue-500 hover:to-green-600 text-white font-bold py-4 px-4 rounded-2xl text-lg shadow-lg transform hover:scale-105 transition-all duration-200";
             
             if (showResult) {
@@ -243,7 +370,7 @@ export default function Game2() {
             onClick={handleNext}
             className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold py-4 px-8 rounded-2xl text-lg shadow-lg transform hover:scale-105 transition-all duration-200"
           >
-            {currentPuzzleIndex < fruitPuzzles.length - 1 ? '다음 문제' : '결과 보기'}
+            {currentPuzzleIndex < itemPuzzles.length - 1 ? '다음 문제' : '결과 보기'}
           </button>
         )}
       </div>
