@@ -7,37 +7,46 @@ import { useEffect, useRef } from "react";
 export default function Home() {
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  useEffect(() => {
-    const playBackgroundMusic = async () => {
-      if (audioRef.current) {
-        try {
-          // 볼륨을 낮게 설정 (배경음이므로)
-          audioRef.current.volume = 0.3;
-          await audioRef.current.play();
-        } catch (error) {
-          console.log('오디오 자동재생 실패, 사용자 인터랙션 대기:', error);
-          // 자동재생이 실패하면 사용자 인터랙션을 기다림
-          const handleFirstInteraction = () => {
-            audioRef.current?.play().catch(err => console.log('재생 실패:', err));
-            document.removeEventListener('click', handleFirstInteraction);
-            document.removeEventListener('touchstart', handleFirstInteraction);
-          };
-          
-          document.addEventListener('click', handleFirstInteraction);
-          document.addEventListener('touchstart', handleFirstInteraction);
-        }
+  const playBackgroundMusic = async () => {
+    if (audioRef.current) {
+      try {
+        // 볼륨을 낮게 설정 (배경음이므로)
+        audioRef.current.volume = 0.3;
+        await audioRef.current.play();
+        console.log('배경음 재생 성공!');
+      } catch (error) {
+        console.log('오디오 재생 실패:', error);
       }
-    };
+    }
+  };
 
+  useEffect(() => {
     // 페이지 로드 후 즉시 음악 재생 시도
     const timer = setTimeout(() => {
       playBackgroundMusic();
-    }, 100); // 100ms 후 재생 시도
+    }, 100);
+
+    // 전역 클릭/터치 이벤트 리스너 (폴백용)
+    const handleFirstInteraction = () => {
+      playBackgroundMusic();
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('touchstart', handleFirstInteraction);
+    };
+
+    document.addEventListener('click', handleFirstInteraction);
+    document.addEventListener('touchstart', handleFirstInteraction);
 
     return () => {
       clearTimeout(timer);
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('touchstart', handleFirstInteraction);
     };
   }, []);
+
+  // 메인 이미지 클릭 핸들러
+  const handleImageClick = () => {
+    playBackgroundMusic();
+  };
 
   const handleAudioEnded = () => {
     // 음악이 끝나면 2초 후 다시 재생
@@ -63,7 +72,11 @@ export default function Home() {
       />
       {/* 메인 로고 이미지 */}
       <div className="mb-8">
-        <div className="w-48 h-48 rounded-full overflow-hidden shadow-lg border-4 border-white">
+        <div 
+          className="w-48 h-48 rounded-full overflow-hidden shadow-lg border-4 border-white cursor-pointer transform hover:scale-105 transition-all duration-200"
+          onClick={handleImageClick}
+          title="클릭하면 음악이 재생됩니다! 🎵"
+        >
           <Image
             src="/main.jpg"
             alt="채아의 한글 나라 로고"
@@ -73,6 +86,9 @@ export default function Home() {
             priority
           />
         </div>
+        <p className="text-center text-sm text-purple-500 mt-2 opacity-75">
+          🎵 이미지를 클릭하면 음악이 재생돼요!
+        </p>
       </div>
 
       {/* 제목 */}
