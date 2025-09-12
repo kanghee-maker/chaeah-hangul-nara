@@ -118,7 +118,7 @@ export default function Home() {
         <h1 className="title-kids-jua text-4xl md:text-6xl leading-tight">
           채아의 한글 나라
         </h1>
-        <p className="text-lg text-purple-600 font-medium mt-2 font-kids-jua">
+        <p className="text-lg text-purple-600 font-normal mt-2 font-kids-jua">
           재미있는 한글 학습을 시작해보세요! 🌟
         </p>
       </div>

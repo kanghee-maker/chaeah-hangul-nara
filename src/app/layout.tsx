@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body
-        className={`${notoSansKR.variable} ${jua.variable} antialiased bg-gradient-to-br from-pink-100 to-purple-100 min-h-screen`}
+        className={`${notoSansKR.variable} ${jua.variable} antialiased bg-pink-100 min-h-screen`}
       >
         {children}
       </body>
