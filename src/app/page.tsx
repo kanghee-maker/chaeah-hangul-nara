@@ -36,14 +36,6 @@ export default function Home() {
     // 랜덤 이미지 선택
     const randomIndex = Math.floor(Math.random() * imageList.length);
     setSelectedImage(imageList[randomIndex]);
-
-    // 나머지 이미지들을 백그라운드에서 미리 로드 (캐싱)
-    imageList.forEach((src, index) => {
-      if (index !== randomIndex) {
-        const img = new window.Image();
-        img.src = src;
-      }
-    });
     
     // 페이지 로드 후 즉시 음악 재생 시도
     const timer = setTimeout(() => {
@@ -109,13 +101,9 @@ export default function Home() {
               height={192}
               className="w-full h-full object-cover"
               priority
-              quality={60}
-              placeholder="blur"
-              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyBYD4/5/8AFnlhJhH2sLBHCYOB5HY/5tg+Faa+TK5lBVKlyuY4U1C1YKjdJ9TfIKjdJ9Tf/9k="
-              sizes="(max-width: 768px) 192px, 192px"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-pink-200 to-purple-200 flex items-center justify-center animate-pulse">
+            <div className="w-full h-full bg-gradient-to-br from-pink-200 to-purple-200 flex items-center justify-center">
               <div className="text-4xl">🎪</div>
             </div>
           )}
