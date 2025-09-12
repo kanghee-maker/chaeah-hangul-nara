@@ -11,7 +11,7 @@ const notoSansKR = Noto_Sans_KR({
 
 const jua = Jua({
   variable: "--font-jua",
-  subsets: ["latin", "korean"],
+  subsets: ["latin"],
   weight: "400",
   display: "swap",
 });
