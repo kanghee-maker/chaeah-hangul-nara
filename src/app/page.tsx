@@ -2,10 +2,65 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useRef } from "react";
 
 export default function Home() {
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    const playBackgroundMusic = async () => {
+      if (audioRef.current) {
+        try {
+          // 볼륨을 낮게 설정 (배경음이므로)
+          audioRef.current.volume = 0.3;
+          await audioRef.current.play();
+        } catch (error) {
+          console.log('오디오 자동재생 실패, 사용자 인터랙션 대기:', error);
+          // 자동재생이 실패하면 사용자 인터랙션을 기다림
+          const handleFirstInteraction = () => {
+            audioRef.current?.play().catch(err => console.log('재생 실패:', err));
+            document.removeEventListener('click', handleFirstInteraction);
+            document.removeEventListener('touchstart', handleFirstInteraction);
+          };
+          
+          document.addEventListener('click', handleFirstInteraction);
+          document.addEventListener('touchstart', handleFirstInteraction);
+        }
+      }
+    };
+
+    // 페이지 로드 후 즉시 음악 재생 시도
+    const timer = setTimeout(() => {
+      playBackgroundMusic();
+    }, 100); // 100ms 후 재생 시도
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
+
+  const handleAudioEnded = () => {
+    // 음악이 끝나면 2초 후 다시 재생
+    setTimeout(() => {
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play().catch(error => {
+          console.log('오디오 재생 실패:', error);
+        });
+      }
+    }, 2000);
+  };
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-8">
+      {/* 배경 음악 */}
+      <audio
+        ref={audioRef}
+        src="/start.m4a"
+        onEnded={handleAudioEnded}
+        preload="auto"
+        autoPlay
+        muted={false}
+      />
       {/* 메인 로고 이미지 */}
       <div className="mb-8">
         <div className="w-48 h-48 rounded-full overflow-hidden shadow-lg border-4 border-white">
@@ -38,7 +93,7 @@ export default function Home() {
         >
           🎯 이름 맞히기
           <div className="text-sm font-normal mt-1 opacity-90">
-            🍎 과일 🚗 교통수단 🌈 색깔 이름을 맞혀보세요!
+            🍎 과일 🚗 교통수단 🌈 색깔 👸 디즈니공주 🍕 음식 이름을 맞혀보세요!
           </div>
         </Link>
 

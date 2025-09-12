@@ -27,6 +27,20 @@ const categories = [
     hoverColor: 'from-purple-500 to-pink-600'
   },
   {
+    name: '디즈니 공주',
+    emoji: '👸',
+    description: '예쁜 디즈니 공주들을 만나보세요!',
+    color: 'from-pink-400 to-rose-500',
+    hoverColor: 'from-pink-500 to-rose-600'
+  },
+  {
+    name: '음식',
+    emoji: '🍕',
+    description: '맛있는 음식들을 배워보세요!',
+    color: 'from-orange-400 to-red-500',
+    hoverColor: 'from-orange-500 to-red-600'
+  },
+  {
     name: '모든 카테고리',
     emoji: '🎪',
     description: '모든 주제를 섞어서 게임해요!',
@@ -54,8 +68,8 @@ function CategorySelectContent() {
       </div>
 
       {/* 카테고리 선택 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl mb-8">
-        {categories.map((category, index) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-4xl mb-8">
+        {categories.map((category) => (
           <Link
             key={category.name}
             href={`/game${gameType}?category=${encodeURIComponent(category.name)}`}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Suspense } from 'react';
@@ -161,6 +161,104 @@ const itemPuzzles: ItemPuzzle[] = [
     missingChar: '얀',
     options: ['얀', '라', '록'],
     category: '색깔'
+  },
+  // 디즈니 공주
+  {
+    emoji: '❄️',
+    name: '엘사',
+    display: '엘_',
+    missingChar: '사',
+    options: ['사', '얀', '라'],
+    category: '디즈니 공주'
+  },
+  {
+    emoji: '🌹',
+    name: '벨',
+    display: '_',
+    missingChar: '벨',
+    options: ['벨', '사', '얀'],
+    category: '디즈니 공주'
+  },
+  {
+    emoji: '🍎',
+    name: '백설공주',
+    display: '백_공주',
+    missingChar: '설',
+    options: ['설', '벨', '사'],
+    category: '디즈니 공주'
+  },
+  {
+    emoji: '👠',
+    name: '신데렐라',
+    display: '신_렐라',
+    missingChar: '데',
+    options: ['데', '설', '벨'],
+    category: '디즈니 공주'
+  },
+  {
+    emoji: '🧡',
+    name: '안나',
+    display: '안_',
+    missingChar: '나',
+    options: ['나', '데', '설'],
+    category: '디즈니 공주'
+  },
+  {
+    emoji: '🧜‍♀️',
+    name: '아리엘',
+    display: '아_엘',
+    missingChar: '리',
+    options: ['리', '나', '데'],
+    category: '디즈니 공주'
+  },
+  // 음식
+  {
+    emoji: '🍕',
+    name: '피자',
+    display: '피_',
+    missingChar: '자',
+    options: ['자', '리', '나'],
+    category: '음식'
+  },
+  {
+    emoji: '🍔',
+    name: '햄버거',
+    display: '햄_거',
+    missingChar: '버',
+    options: ['버', '자', '리'],
+    category: '음식'
+  },
+  {
+    emoji: '🍗',
+    name: '치킨',
+    display: '치_',
+    missingChar: '킨',
+    options: ['킨', '버', '자'],
+    category: '음식'
+  },
+  {
+    emoji: '🍜',
+    name: '라면',
+    display: '라_',
+    missingChar: '면',
+    options: ['면', '킨', '버'],
+    category: '음식'
+  },
+  {
+    emoji: '🍙',
+    name: '김밥',
+    display: '김_',
+    missingChar: '밥',
+    options: ['밥', '면', '킨'],
+    category: '음식'
+  },
+  {
+    emoji: '🍰',
+    name: '케이크',
+    display: '케이_',
+    missingChar: '크',
+    options: ['크', '밥', '면'],
+    category: '음식'
   }
 ];
 
@@ -190,7 +288,30 @@ function Game2Content() {
   const [gameComplete, setGameComplete] = useState(false);
   const [shuffledOptions, setShuffledOptions] = useState<string[]>([]);
 
+  // 효과음을 위한 ref
+  const correctSoundRef = useRef<HTMLAudioElement>(null);
+  const wrongSoundRef = useRef<HTMLAudioElement>(null);
+
   const currentPuzzle = filteredPuzzles[currentPuzzleIndex];
+
+  // 효과음 재생 함수
+  const playCorrectSound = () => {
+    if (correctSoundRef.current) {
+      correctSoundRef.current.currentTime = 0;
+      correctSoundRef.current.play().catch(error => {
+        console.log('정답 효과음 재생 실패:', error);
+      });
+    }
+  };
+
+  const playWrongSound = () => {
+    if (wrongSoundRef.current) {
+      wrongSoundRef.current.currentTime = 0;
+      wrongSoundRef.current.play().catch(error => {
+        console.log('오답 효과음 재생 실패:', error);
+      });
+    }
+  };
 
   // 컴포넌트 마운트 시 선택지 초기화
   useEffect(() => {
@@ -207,6 +328,9 @@ function Game2Content() {
     
     if (answer === currentPuzzle.missingChar) {
       setScore(score + 1);
+      playCorrectSound(); // 정답 효과음 재생
+    } else {
+      playWrongSound(); // 오답 효과음 재생
     }
   };
 
@@ -302,6 +426,9 @@ function Game2Content() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gradient-to-br from-green-100 to-blue-100">
+      {/* 효과음 */}
+      <audio ref={correctSoundRef} src="/good.m4a" preload="auto" />
+      <audio ref={wrongSoundRef} src="/wrong.m4a" preload="auto" />
       {/* 진행 상황 */}
       <div className="mb-6 text-center">
         <div className="text-lg text-blue-700 font-medium">

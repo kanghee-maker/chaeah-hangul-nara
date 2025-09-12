@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Suspense } from 'react';
@@ -144,6 +144,90 @@ const categories: Category[] = [
         category: '색깔'
       }
     ]
+  },
+  {
+    name: '디즈니 공주',
+    emoji: '👸',
+    items: [
+      {
+        emoji: '❄️',
+        name: '엘사',
+        options: ['엘사', '안나', '벨'],
+        category: '디즈니 공주'
+      },
+      {
+        emoji: '🌹',
+        name: '벨',
+        options: ['벨', '엘사', '신데렐라'],
+        category: '디즈니 공주'
+      },
+      {
+        emoji: '🍎',
+        name: '백설공주',
+        options: ['백설공주', '벨', '엘사'],
+        category: '디즈니 공주'
+      },
+      {
+        emoji: '👠',
+        name: '신데렐라',
+        options: ['신데렐라', '백설공주', '안나'],
+        category: '디즈니 공주'
+      },
+      {
+        emoji: '🧡',
+        name: '안나',
+        options: ['안나', '신데렐라', '벨'],
+        category: '디즈니 공주'
+      },
+      {
+        emoji: '🧜‍♀️',
+        name: '아리엘',
+        options: ['아리엘', '엘사', '백설공주'],
+        category: '디즈니 공주'
+      }
+    ]
+  },
+  {
+    name: '음식',
+    emoji: '🍕',
+    items: [
+      {
+        emoji: '🍕',
+        name: '피자',
+        options: ['피자', '햄버거', '치킨'],
+        category: '음식'
+      },
+      {
+        emoji: '🍔',
+        name: '햄버거',
+        options: ['햄버거', '피자', '김밥'],
+        category: '음식'
+      },
+      {
+        emoji: '🍗',
+        name: '치킨',
+        options: ['치킨', '햄버거', '라면'],
+        category: '음식'
+      },
+      {
+        emoji: '🍜',
+        name: '라면',
+        options: ['라면', '치킨', '김밥'],
+        category: '음식'
+      },
+      {
+        emoji: '🍙',
+        name: '김밥',
+        options: ['김밥', '라면', '피자'],
+        category: '음식'
+      },
+      {
+        emoji: '🍰',
+        name: '케이크',
+        options: ['케이크', '김밥', '햄버거'],
+        category: '음식'
+      }
+    ]
   }
 ];
 
@@ -176,7 +260,30 @@ function Game1Content() {
   const [gameComplete, setGameComplete] = useState(false);
   const [shuffledOptions, setShuffledOptions] = useState<string[]>([]);
 
+  // 효과음을 위한 ref
+  const correctSoundRef = useRef<HTMLAudioElement>(null);
+  const wrongSoundRef = useRef<HTMLAudioElement>(null);
+
   const currentItem = filteredItems[currentItemIndex];
+
+  // 효과음 재생 함수
+  const playCorrectSound = () => {
+    if (correctSoundRef.current) {
+      correctSoundRef.current.currentTime = 0;
+      correctSoundRef.current.play().catch(error => {
+        console.log('정답 효과음 재생 실패:', error);
+      });
+    }
+  };
+
+  const playWrongSound = () => {
+    if (wrongSoundRef.current) {
+      wrongSoundRef.current.currentTime = 0;
+      wrongSoundRef.current.play().catch(error => {
+        console.log('오답 효과음 재생 실패:', error);
+      });
+    }
+  };
 
   // 컴포넌트 마운트 시 선택지 초기화
   useEffect(() => {
@@ -193,6 +300,9 @@ function Game1Content() {
     
     if (answer === currentItem.name) {
       setScore(score + 1);
+      playCorrectSound(); // 정답 효과음 재생
+    } else {
+      playWrongSound(); // 오답 효과음 재생
     }
   };
 
@@ -251,6 +361,9 @@ function Game1Content() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gradient-to-br from-pink-100 to-purple-100">
+      {/* 효과음 */}
+      <audio ref={correctSoundRef} src="/good.m4a" preload="auto" />
+      <audio ref={wrongSoundRef} src="/wrong.m4a" preload="auto" />
       {/* 진행 상황 */}
       <div className="mb-6 text-center">
         <div className="text-lg text-purple-700 font-medium">
