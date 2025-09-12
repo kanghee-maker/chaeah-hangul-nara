@@ -332,14 +332,23 @@ function Game1Content() {
   };
 
   if (gameComplete) {
+    const totalCount = filteredItems.length;
+    const correctCount = score;
+    const percent = Math.round((correctCount / Math.max(totalCount, 1)) * 100);
+    const medal = percent >= 90 ? '🥇' : percent >= 70 ? '🥈' : percent >= 50 ? '🥉' : '🎖️';
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gradient-to-br from-pink-100 to-purple-100">
         <div className="bg-white rounded-3xl p-8 shadow-2xl text-center max-w-md w-full">
-          <div className="text-6xl mb-4">🎉</div>
+          <div className="text-6xl mb-4">{medal}</div>
           <h2 className="text-3xl font-bold text-purple-800 mb-4">게임 완료!</h2>
-          <p className="text-xl text-purple-600 mb-6">
-            {score}개 맞혔어요! 정말 잘했어요! 👏
-          </p>
+          <div className="space-y-2 mb-6">
+            <p className="text-xl text-purple-700">
+              총 <span className="font-bold">{totalCount}</span>문제 중, <span className="font-bold">{correctCount}</span>문제를 맞혔어요!
+            </p>
+            <p className="text-2xl font-bold text-purple-800">
+              점수: <span className="text-pink-500">{percent}</span> / 100
+            </p>
+          </div>
           <div className="flex flex-col gap-4">
             <button
               onClick={handleRestart}
