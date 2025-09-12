@@ -87,9 +87,9 @@ export default function Home() {
         muted={false}
       />
       {/* 메인 로고 이미지 */}
-      <div className="mb-8">
+      <div className="mb-8 flex flex-col items-center">
         <div 
-          className="w-48 h-48 rounded-full overflow-hidden shadow-lg border-4 border-white cursor-pointer transform hover:scale-105 transition-all duration-200"
+          className="w-48 h-48 rounded-full overflow-hidden shadow-lg border-4 border-white cursor-pointer transform hover:scale-105 transition-all duration-200 mx-auto"
           onClick={handleImageClick}
           title="클릭하면 음악이 재생됩니다! 🎵"
         >
