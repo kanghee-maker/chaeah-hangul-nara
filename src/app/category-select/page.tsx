@@ -59,7 +59,7 @@ function CategorySelectContent() {
     <div className="min-h-screen flex flex-col items-center justify-center p-8">
       {/* 헤더 */}
       <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-4xl font-bold text-purple-800 mb-4 font-noto-sans-kr">
+        <h1 className="text-3xl md:text-4xl font-bold text-purple-800 mb-4 font-kids-jua">
           {gameIcon} {gameTitle}
         </h1>
         <p className="text-lg text-purple-600 font-medium">

@@ -8,18 +8,44 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-noto-sans-kr);
+  --font-sans: var(--font-jua);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-noto-sans-kr), 'Noto Sans KR', sans-serif;
+  font-family: var(--font-jua), 'Jua', 'Noto Sans KR', sans-serif;
 }
 
 /* 어린이용 폰트 스타일 */
 .font-noto-sans-kr {
-  font-family: var(--font-noto-sans-kr), 'Noto Sans KR', sans-serif;
+  /* 기존 클래스도 Jua로 매핑해 통일 */
+  font-family: var(--font-jua), 'Jua', 'Noto Sans KR', sans-serif;
+}
+
+.font-kids-jua {
+  font-family: var(--font-jua), 'Jua', 'Noto Sans KR', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* 메인 타이틀: Jua 폰트 + 그라디언트 + 외곽선 */
+.title-kids-jua {
+  font-family: var(--font-jua), 'Jua', 'Noto Sans KR', sans-serif;
+  font-weight: 400;
+  letter-spacing: 1px;
+  /* 그라디언트 텍스트 */
+  background: linear-gradient(90deg, #ff74d9 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* 외곽선 효과 */
+  -webkit-text-stroke: 2px #ffffff;
+  text-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+}
+
+@media (max-width: 640px) {
+  .title-kids-jua {
+    -webkit-text-stroke: 1.5px #ffffff;
+  }
 }
 
 /* 애니메이션 효과 */

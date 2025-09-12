@@ -113,12 +113,12 @@ export default function Home() {
         </p>
       </div>
 
-      {/* 제목 */}
+      {/* 제목 (텍스트 타이틀 with Jua gradient+stroke) */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold text-purple-800 mb-4 font-noto-sans-kr">
+        <h1 className="title-kids-jua text-4xl md:text-6xl leading-tight">
           채아의 한글 나라
         </h1>
-        <p className="text-lg text-purple-600 font-medium">
+        <p className="text-lg text-purple-600 font-medium mt-2 font-kids-jua">
           재미있는 한글 학습을 시작해보세요! 🌟
         </p>
       </div>
