@@ -2,10 +2,13 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
   const audioRef = useRef<HTMLAudioElement>(null);
+  
+  // 랜덤 이미지 선택을 위한 state
+  const [selectedImage, setSelectedImage] = useState('');
 
   const playBackgroundMusic = async () => {
     if (audioRef.current) {
@@ -21,6 +24,19 @@ export default function Home() {
   };
 
   useEffect(() => {
+    // 이미지 목록 (기존 main.jpg + 새로 추가된 4개)
+    const imageList = [
+      '/main.jpg',
+      '/start1 (1).jpg',
+      '/start1 (2).jpg', 
+      '/start1 (3).jpg',
+      '/start1 (4).jpg'
+    ];
+    
+    // 랜덤 이미지 선택
+    const randomIndex = Math.floor(Math.random() * imageList.length);
+    setSelectedImage(imageList[randomIndex]);
+    
     // 페이지 로드 후 즉시 음악 재생 시도
     const timer = setTimeout(() => {
       playBackgroundMusic();
@@ -77,14 +93,20 @@ export default function Home() {
           onClick={handleImageClick}
           title="클릭하면 음악이 재생됩니다! 🎵"
         >
-          <Image
-            src="/main.jpg"
-            alt="채아의 한글 나라 로고"
-            width={192}
-            height={192}
-            className="w-full h-full object-cover"
-            priority
-          />
+          {selectedImage ? (
+            <Image
+              src={selectedImage}
+              alt="채아의 한글 나라 로고"
+              width={192}
+              height={192}
+              className="w-full h-full object-cover"
+              priority
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-pink-200 to-purple-200 flex items-center justify-center">
+              <div className="text-4xl">🎪</div>
+            </div>
+          )}
         </div>
         <p className="text-center text-sm text-purple-500 mt-2 opacity-75">
           🎵 이미지를 클릭하면 음악이 재생돼요!
