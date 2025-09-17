@@ -67,3 +67,25 @@ body {
 .animate-bounce {
   animation: bounce 2s infinite;
 }
+
+/* Orientation-specific layout helpers */
+@media (orientation: landscape) {
+  .game-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    text-align: left;
+    max-width: 900px;
+  }
+  .game-card .game-visual {
+    margin-bottom: 0 !important;
+  }
+  .emoji-visual {
+    font-size: clamp(64px, 12vw, 120px) !important;
+    line-height: 1.1;
+  }
+  /* Game1: portrait 1열 옵션 → landscape 2열로 */
+  .options-grid-portrait {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}

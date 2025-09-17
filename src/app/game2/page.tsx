@@ -452,25 +452,24 @@ function Game2Content() {
       </div>
 
       {/* 게임 영역 */}
-      <div className="bg-white rounded-3xl p-8 shadow-2xl text-center max-w-lg w-full">
-        {/* 아이템 그림 */}
-        <div className="mb-8">
-          <div className="text-8xl mb-4">{currentPuzzle.emoji}</div>
+      <div className="bg-white rounded-3xl p-8 shadow-2xl text-center w-full max-w-none game-card">
+        {/* 좌측: 아이템 그림/글자 */}
+        <div className="game-visual mb-8">
+          <div className="text-8xl mb-4 emoji-visual">{currentPuzzle.emoji}</div>
           <p className="text-xl text-blue-600 font-medium mb-4">
             이 {currentPuzzle.category}의 빈칸에 들어갈 글자를 찾아보세요!
           </p>
-        </div>
-
-        {/* 글자 표시 */}
-        <div className="mb-8 flex justify-center items-center">
-          <div className="flex items-center">
-            {renderDisplayText()}
+          <div className="mb-8 flex justify-center items-center">
+            <div className="flex items-center">
+              {renderDisplayText()}
+            </div>
           </div>
         </div>
 
-        {/* 선택지 */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          {shuffledOptions.map((option, index) => {
+        {/* 우측: 선택지 + 결과 + 다음 */}
+        <div className="game-interact">
+          <div className="grid grid-cols-3 gap-4 mb-6 options-grid-portrait">
+            {shuffledOptions.map((option, index) => {
             let buttonClass = "bg-gradient-to-r from-blue-400 to-green-500 hover:from-blue-500 hover:to-green-600 text-white font-bold py-4 px-4 rounded-2xl text-lg shadow-lg transform hover:scale-105 transition-all duration-200";
             
             if (showResult) {
@@ -482,47 +481,48 @@ function Game2Content() {
                 buttonClass = "bg-gray-300 text-gray-500 font-bold py-4 px-4 rounded-2xl text-lg shadow-lg";
               }
             }
-
-            return (
-              <button
-                key={index}
-                onClick={() => handleAnswerSelect(option)}
-                className={buttonClass}
-                disabled={showResult}
-              >
-                {option}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* 결과 표시 */}
-        {showResult && (
-          <div className="mb-6">
-            {selectedAnswer === currentPuzzle.missingChar ? (
-              <div className="text-2xl text-green-600 font-bold">
-                정답이에요! 🎉
-              </div>
-            ) : (
-              <div className="text-2xl text-red-600 font-bold">
-                아쉬워요! 정답은 &ldquo;{currentPuzzle.missingChar}&rdquo;이에요! 😊
-              </div>
-            )}
-            <div className="text-lg text-blue-600 mt-2">
-              완성된 단어: <span className="font-bold">{currentPuzzle.name}</span>
-            </div>
+              
+              return (
+                <button
+                  key={index}
+                  onClick={() => handleAnswerSelect(option)}
+                  className={buttonClass}
+                  disabled={showResult}
+                >
+                  {option}
+                </button>
+              );
+            })}
           </div>
-        )}
 
-        {/* 다음 버튼 */}
-        {showResult && (
-          <button
-            onClick={handleNext}
-            className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold py-4 px-8 rounded-2xl text-lg shadow-lg transform hover:scale-105 transition-all duration-200"
-          >
-            {currentPuzzleIndex < filteredPuzzles.length - 1 ? '다음 문제' : '결과 보기'}
-          </button>
-        )}
+          {/* 결과 표시 */}
+          {showResult && (
+            <div className="mb-6">
+              {selectedAnswer === currentPuzzle.missingChar ? (
+                <div className="text-2xl text-green-600 font-bold">
+                  정답이에요! 🎉
+                </div>
+              ) : (
+                <div className="text-2xl text-red-600 font-bold">
+                  아쉬워요! 정답은 &ldquo;{currentPuzzle.missingChar}&rdquo;이에요! 😊
+                </div>
+              )}
+              <div className="text-lg text-blue-600 mt-2">
+                완성된 단어: <span className="font-bold">{currentPuzzle.name}</span>
+              </div>
+            </div>
+          )}
+
+          {/* 다음 버튼 */}
+          {showResult && (
+            <button
+              onClick={handleNext}
+              className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold py-4 px-8 rounded-2xl text-lg shadow-lg transform hover:scale-105 transition-all duration-200"
+            >
+              {currentPuzzleIndex < filteredPuzzles.length - 1 ? '다음 문제' : '결과 보기'}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* 네비게이션 버튼들 */}
