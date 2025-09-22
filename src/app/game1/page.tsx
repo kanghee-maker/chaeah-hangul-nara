@@ -228,6 +228,18 @@ const categories: Category[] = [
         category: '음식'
       }
     ]
+  },
+  {
+    name: '동물',
+    emoji: '🐶',
+    items: [
+      { emoji: '🐶', name: '강아지', options: ['강아지', '고양이', '토끼'], category: '동물' },
+      { emoji: '🐱', name: '고양이', options: ['고양이', '강아지', '호랑이'], category: '동물' },
+      { emoji: '🐰', name: '토끼', options: ['토끼', '강아지', '돼지'], category: '동물' },
+      { emoji: '🦁', name: '사자', options: ['사자', '호랑이', '코끼리'], category: '동물' },
+      { emoji: '🐯', name: '호랑이', options: ['호랑이', '사자', '코끼리'], category: '동물' },
+      { emoji: '🐘', name: '코끼리', options: ['코끼리', '기린', '사자'], category: '동물' },
+    ]
   }
 ];
 

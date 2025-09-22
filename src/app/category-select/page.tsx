@@ -13,6 +13,13 @@ const categories = [
     hoverColor: 'from-red-500 to-pink-600'
   },
   {
+    name: '동물',
+    emoji: '🐶',
+    description: '귀여운 동물 친구들을 배워보세요!',
+    color: 'from-amber-400 to-yellow-500',
+    hoverColor: 'from-amber-500 to-yellow-600'
+  },
+  {
     name: '교통수단',
     emoji: '🚗',
     description: '다양한 탈것들을 알아보세요!',

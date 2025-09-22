@@ -259,6 +259,55 @@ const itemPuzzles: ItemPuzzle[] = [
     missingChar: '크',
     options: ['크', '밥', '면'],
     category: '음식'
+  },
+  // 동물
+  {
+    emoji: '🐶',
+    name: '강아지',
+    display: '강_지',
+    missingChar: '아',
+    options: ['아', '이', '오'],
+    category: '동물'
+  },
+  {
+    emoji: '🐱',
+    name: '고양이',
+    display: '고_이',
+    missingChar: '양',
+    options: ['양', '냥', '얀'],
+    category: '동물'
+  },
+  {
+    emoji: '🐰',
+    name: '토끼',
+    display: '토_기',
+    missingChar: '끼',
+    options: ['끼', '까', '가'],
+    category: '동물'
+  },
+  {
+    emoji: '🦁',
+    name: '사자',
+    display: '사_',
+    missingChar: '자',
+    options: ['자', '차', '쟈'],
+    category: '동물'
+  },
+  {
+    emoji: '🐯',
+    name: '호랑이',
+    display: '호_이',
+    missingChar: '랑',
+    options: ['랑', '량', '낭'],
+    category: '동물'
+  },
+  {
+    emoji: '🐘',
+    name: '코끼리',
+    display: '코_리',
+    missingChar: '끼',
+    options: ['끼', '키', '까'],
+    category: '동물'
   }
 ];
 
