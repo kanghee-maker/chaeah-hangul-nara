@@ -32,6 +32,22 @@ function CategorySelectContent() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 sm:p-8">
+      {/* 상단 탭 전환 바 */}
+      <div className="mb-6 bg-white/90 backdrop-blur-sm p-1.5 rounded-full shadow-md flex gap-2 border border-purple-100">
+        <Link
+          href="/?tab=hangul"
+          className="px-6 py-2 rounded-full font-bold text-base bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-sm"
+        >
+          🔤 한글
+        </Link>
+        <Link
+          href="/?tab=math"
+          className="px-6 py-2 rounded-full font-bold text-base text-indigo-600 hover:bg-indigo-50 transition-all"
+        >
+          🔢 수학
+        </Link>
+      </div>
+
       {/* 헤더 */}
       <div className="text-center mb-6">
         <h1 className="text-3xl md:text-4xl font-bold text-purple-800 mb-2 font-kids-jua">

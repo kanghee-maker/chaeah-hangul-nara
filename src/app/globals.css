@@ -42,8 +42,22 @@ body {
   text-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
 }
 
+/* 수학 나라 타이틀: Jua 폰트 + 블루/인디고 그라디언트 + 외곽선 */
+.title-kids-math {
+  font-family: var(--font-jua), 'Jua', 'Noto Sans KR', sans-serif;
+  font-weight: 400;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #2563eb 0%, #06b6d4 50%, #6366f1 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-stroke: 2px #ffffff;
+  text-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
 @media (max-width: 640px) {
-  .title-kids-jua {
+  .title-kids-jua,
+  .title-kids-math {
     -webkit-text-stroke: 1.5px #ffffff;
   }
 }
