@@ -114,24 +114,24 @@ export default function Home() {
       </div>
 
       {/* 제목 (텍스트 타이틀 with Jua gradient+stroke) */}
-      <div className="text-center mb-12">
+      <div className="text-center mb-10">
         <h1 className="title-kids-jua text-4xl md:text-6xl leading-tight">
           채아의 한글 나라
         </h1>
         <p className="text-lg text-purple-600 font-normal mt-2 font-kids-jua">
-          재미있는 한글 학습을 시작해보세요! 🌟
+          생생한 사진과 소리로 재미있는 한글 학습을 시작해보세요! 🌟
         </p>
       </div>
 
       {/* 메뉴 버튼들 */}
-      <div className="flex flex-col gap-6 w-full max-w-md">
+      <div className="flex flex-col gap-5 w-full max-w-md">
         <Link 
           href="/category-select?game=1"
           className="bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 text-white font-bold py-6 px-8 rounded-2xl text-xl shadow-lg transform hover:scale-105 transition-all duration-200 text-center"
         >
           🎯 이름 맞히기
           <div className="text-sm font-normal mt-1 opacity-90">
-            🍎 과일 🚗 교통수단 🌈 색깔 👸 디즈니공주 🍕 음식 이름을 맞혀보세요!
+            🍎 과일 · 🥕 채소 · 🐶 동물 · 🚗 탈것 · 🦋 자연 등 132개 생생한 사진으로 이름을 맞혀보세요!
           </div>
         </Link>
 
@@ -141,13 +141,23 @@ export default function Home() {
         >
           ✏️ 빈칸 채우기
           <div className="text-sm font-normal mt-1 opacity-90">
-            다양한 단어의 빈칸을 채워보세요!
+            그림과 소리를 듣고 단어의 빈칸 글자를 찾아보세요!
+          </div>
+        </Link>
+
+        <Link 
+          href="/words-book"
+          className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-bold py-5 px-8 rounded-2xl text-xl shadow-lg transform hover:scale-105 transition-all duration-200 text-center"
+        >
+          📖 그림 단어장
+          <div className="text-sm font-normal mt-1 opacity-90">
+            9가지 주제 132개 그림 카드를 누르며 한글 발음을 들어보세요!
           </div>
         </Link>
       </div>
 
       {/* 하단 장식 */}
-      <div className="mt-12 flex gap-4 text-2xl">
+      <div className="mt-10 flex gap-4 text-2xl">
         <span className="animate-bounce">🌟</span>
         <span className="animate-bounce" style={{animationDelay: '0.1s'}}>🎈</span>
         <span className="animate-bounce" style={{animationDelay: '0.2s'}}>🎨</span>

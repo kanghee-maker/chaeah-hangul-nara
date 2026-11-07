@@ -1,349 +1,75 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Suspense } from 'react';
+import {
+  WORDS,
+  WordItem,
+  shuffleArray,
+  generateBlankPuzzle,
+  speakKorean
+} from '@/data/words';
+import WordVisual from '@/components/WordVisual';
 
-interface ItemPuzzle {
-  emoji: string;
-  name: string;
-  display: string; // 빈칸이 포함된 표시
-  missingChar: string; // 빈칸에 들어갈 글자
-  options: string[]; // 선택지
-  category: string;
+interface PuzzleState {
+  item: WordItem;
+  blankIndex: number;
+  missingChar: string;
+  options: string[];
 }
-
-const itemPuzzles: ItemPuzzle[] = [
-  // 과일
-  {
-    emoji: '🍎',
-    name: '사과',
-    display: '사_',
-    missingChar: '과',
-    options: ['과', '나', '기'],
-    category: '과일'
-  },
-  {
-    emoji: '🍌',
-    name: '바나나',
-    display: '바_나',
-    missingChar: '나',
-    options: ['나', '과', '기'],
-    category: '과일'
-  },
-  {
-    emoji: '🍓',
-    name: '딸기',
-    display: '딸_',
-    missingChar: '기',
-    options: ['기', '나', '과'],
-    category: '과일'
-  },
-  {
-    emoji: '🍇',
-    name: '포도',
-    display: '포_',
-    missingChar: '도',
-    options: ['도', '나', '기'],
-    category: '과일'
-  },
-  {
-    emoji: '🍊',
-    name: '오렌지',
-    display: '오_지',
-    missingChar: '렌',
-    options: ['렌', '나', '기'],
-    category: '과일'
-  },
-  {
-    emoji: '🍑',
-    name: '복숭아',
-    display: '복_아',
-    missingChar: '숭',
-    options: ['숭', '나', '기'],
-    category: '과일'
-  },
-  // 교통수단
-  {
-    emoji: '🚗',
-    name: '자동차',
-    display: '자_차',
-    missingChar: '동',
-    options: ['동', '기', '나'],
-    category: '교통수단'
-  },
-  {
-    emoji: '🚌',
-    name: '버스',
-    display: '버_',
-    missingChar: '스',
-    options: ['스', '동', '나'],
-    category: '교통수단'
-  },
-  {
-    emoji: '🚂',
-    name: '기차',
-    display: '기_',
-    missingChar: '차',
-    options: ['차', '스', '동'],
-    category: '교통수단'
-  },
-  {
-    emoji: '✈️',
-    name: '비행기',
-    display: '비_기',
-    missingChar: '행',
-    options: ['행', '차', '스'],
-    category: '교통수단'
-  },
-  {
-    emoji: '🚢',
-    name: '배',
-    display: '_',
-    missingChar: '배',
-    options: ['배', '행', '차'],
-    category: '교통수단'
-  },
-  {
-    emoji: '🚲',
-    name: '자전거',
-    display: '자_거',
-    missingChar: '전',
-    options: ['전', '배', '행'],
-    category: '교통수단'
-  },
-  // 색깔
-  {
-    emoji: '❤️',
-    name: '빨간색',
-    display: '빨_색',
-    missingChar: '간',
-    options: ['간', '전', '배'],
-    category: '색깔'
-  },
-  {
-    emoji: '💙',
-    name: '파란색',
-    display: '파_색',
-    missingChar: '란',
-    options: ['란', '간', '전'],
-    category: '색깔'
-  },
-  {
-    emoji: '💛',
-    name: '노란색',
-    display: '노_색',
-    missingChar: '란',
-    options: ['란', '간', '전'],
-    category: '색깔'
-  },
-  {
-    emoji: '💚',
-    name: '초록색',
-    display: '초_색',
-    missingChar: '록',
-    options: ['록', '란', '간'],
-    category: '색깔'
-  },
-  {
-    emoji: '💜',
-    name: '보라색',
-    display: '보_색',
-    missingChar: '라',
-    options: ['라', '록', '란'],
-    category: '색깔'
-  },
-  {
-    emoji: '🤍',
-    name: '하얀색',
-    display: '하_색',
-    missingChar: '얀',
-    options: ['얀', '라', '록'],
-    category: '색깔'
-  },
-  // 디즈니 공주
-  {
-    emoji: '❄️',
-    name: '엘사',
-    display: '엘_',
-    missingChar: '사',
-    options: ['사', '얀', '라'],
-    category: '디즈니 공주'
-  },
-  {
-    emoji: '🌹',
-    name: '벨',
-    display: '_',
-    missingChar: '벨',
-    options: ['벨', '사', '얀'],
-    category: '디즈니 공주'
-  },
-  {
-    emoji: '🍎',
-    name: '백설공주',
-    display: '백_공주',
-    missingChar: '설',
-    options: ['설', '벨', '사'],
-    category: '디즈니 공주'
-  },
-  {
-    emoji: '👠',
-    name: '신데렐라',
-    display: '신_렐라',
-    missingChar: '데',
-    options: ['데', '설', '벨'],
-    category: '디즈니 공주'
-  },
-  {
-    emoji: '🧡',
-    name: '안나',
-    display: '안_',
-    missingChar: '나',
-    options: ['나', '데', '설'],
-    category: '디즈니 공주'
-  },
-  {
-    emoji: '🧜‍♀️',
-    name: '아리엘',
-    display: '아_엘',
-    missingChar: '리',
-    options: ['리', '나', '데'],
-    category: '디즈니 공주'
-  },
-  // 음식
-  {
-    emoji: '🍕',
-    name: '피자',
-    display: '피_',
-    missingChar: '자',
-    options: ['자', '리', '나'],
-    category: '음식'
-  },
-  {
-    emoji: '🍔',
-    name: '햄버거',
-    display: '햄_거',
-    missingChar: '버',
-    options: ['버', '자', '리'],
-    category: '음식'
-  },
-  {
-    emoji: '🍗',
-    name: '치킨',
-    display: '치_',
-    missingChar: '킨',
-    options: ['킨', '버', '자'],
-    category: '음식'
-  },
-  {
-    emoji: '🍜',
-    name: '라면',
-    display: '라_',
-    missingChar: '면',
-    options: ['면', '킨', '버'],
-    category: '음식'
-  },
-  {
-    emoji: '🍙',
-    name: '김밥',
-    display: '김_',
-    missingChar: '밥',
-    options: ['밥', '면', '킨'],
-    category: '음식'
-  },
-  {
-    emoji: '🍰',
-    name: '케이크',
-    display: '케이_',
-    missingChar: '크',
-    options: ['크', '밥', '면'],
-    category: '음식'
-  },
-  // 동물
-  {
-    emoji: '🐶',
-    name: '강아지',
-    display: '강_지',
-    missingChar: '아',
-    options: ['아', '이', '오'],
-    category: '동물'
-  },
-  {
-    emoji: '🐱',
-    name: '고양이',
-    display: '고_이',
-    missingChar: '양',
-    options: ['양', '냥', '얀'],
-    category: '동물'
-  },
-  {
-    emoji: '🐰',
-    name: '토끼',
-    display: '토_기',
-    missingChar: '끼',
-    options: ['끼', '까', '가'],
-    category: '동물'
-  },
-  {
-    emoji: '🦁',
-    name: '사자',
-    display: '사_',
-    missingChar: '자',
-    options: ['자', '차', '쟈'],
-    category: '동물'
-  },
-  {
-    emoji: '🐯',
-    name: '호랑이',
-    display: '호_이',
-    missingChar: '랑',
-    options: ['랑', '량', '낭'],
-    category: '동물'
-  },
-  {
-    emoji: '🐘',
-    name: '코끼리',
-    display: '코_리',
-    missingChar: '끼',
-    options: ['끼', '키', '까'],
-    category: '동물'
-  }
-];
-
-// 배열을 랜덤하게 섞는 함수
-const shuffleArray = (array: string[]) => {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-};
 
 function Game2Content() {
   const searchParams = useSearchParams();
-  const selectedCategory = searchParams.get('category');
-  
-  // 카테고리에 따라 아이템 필터링
-  const filteredPuzzles = selectedCategory && selectedCategory !== '모든 카테고리' 
-    ? itemPuzzles.filter(puzzle => puzzle.category === selectedCategory)
-    : itemPuzzles;
+  const selectedCategory = searchParams.get('category') || '모든 카테고리';
+  const countParam = searchParams.get('count') || '10';
 
+  const [puzzles, setPuzzles] = useState<PuzzleState[]>([]);
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [score, setScore] = useState(0);
   const [gameComplete, setGameComplete] = useState(false);
-  const [shuffledOptions, setShuffledOptions] = useState<string[]>([]);
 
   // 효과음을 위한 ref
   const correctSoundRef = useRef<HTMLAudioElement>(null);
   const wrongSoundRef = useRef<HTMLAudioElement>(null);
 
-  const currentPuzzle = filteredPuzzles[currentPuzzleIndex];
+  const initGame = useCallback(() => {
+    const pool =
+      selectedCategory && selectedCategory !== '모든 카테고리'
+        ? WORDS.filter(item => item.category === selectedCategory)
+        : WORDS;
 
-  // 효과음 재생 함수
+    // 2글자 이상 단어를 우선 배치하여 빈칸 채우기 재미를 높임
+    const multiCharPool = pool.filter(w => w.name.length >= 2);
+    const basePool = multiCharPool.length >= 6 ? multiCharPool : pool;
+
+    const shuffled = shuffleArray(basePool);
+    const limit =
+      countParam === 'all'
+        ? shuffled.length
+        : Math.min(parseInt(countParam, 10) || 10, shuffled.length);
+
+    const generated = shuffled.slice(0, limit).map(item => ({
+      item,
+      ...generateBlankPuzzle(item)
+    }));
+
+    setPuzzles(generated);
+    setCurrentPuzzleIndex(0);
+    setSelectedAnswer(null);
+    setShowResult(false);
+    setScore(0);
+    setGameComplete(false);
+  }, [selectedCategory, countParam]);
+
+  useEffect(() => {
+    initGame();
+  }, [initGame]);
+
+  const currentPuzzle = puzzles[currentPuzzleIndex];
+
   const playCorrectSound = () => {
     if (correctSoundRef.current) {
       correctSoundRef.current.currentTime = 0;
@@ -362,82 +88,76 @@ function Game2Content() {
     }
   };
 
-  // 컴포넌트 마운트 시 선택지 초기화
-  useEffect(() => {
-    if (currentPuzzle) {
-      setShuffledOptions(shuffleArray(currentPuzzle.options));
-    }
-  }, [currentPuzzle]);
-
   const handleAnswerSelect = (answer: string) => {
-    if (showResult) return;
-    
+    if (showResult || !currentPuzzle) return;
+
     setSelectedAnswer(answer);
     setShowResult(true);
-    
+
     if (answer === currentPuzzle.missingChar) {
-      setScore(score + 1);
-      playCorrectSound(); // 정답 효과음 재생
+      setScore(prev => prev + 1);
+      playCorrectSound();
     } else {
-      playWrongSound(); // 오답 효과음 재생
+      playWrongSound();
     }
+
+    setTimeout(() => {
+      speakKorean(currentPuzzle.item.name);
+    }, 350);
   };
 
   const handleNext = () => {
-    if (currentPuzzleIndex < filteredPuzzles.length - 1) {
-      const nextIndex = currentPuzzleIndex + 1;
-      setCurrentPuzzleIndex(nextIndex);
+    if (currentPuzzleIndex < puzzles.length - 1) {
+      setCurrentPuzzleIndex(prev => prev + 1);
       setSelectedAnswer(null);
       setShowResult(false);
-      // 다음 문제의 선택지를 섞음
-      setShuffledOptions(shuffleArray(filteredPuzzles[nextIndex].options));
     } else {
       setGameComplete(true);
     }
   };
 
-  const handleRestart = () => {
-    setCurrentPuzzleIndex(0);
-    setSelectedAnswer(null);
-    setShowResult(false);
-    setScore(0);
-    setGameComplete(false);
-    // 첫 번째 문제의 선택지를 섞음
-    if (filteredPuzzles.length > 0) {
-      setShuffledOptions(shuffleArray(filteredPuzzles[0].options));
-    }
-  };
+  if (puzzles.length === 0 || !currentPuzzle) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-2xl font-bold text-blue-700">
+          문제를 준비하고 있어요... ✏️
+        </div>
+      </div>
+    );
+  }
 
   const renderDisplayText = () => {
-    return currentPuzzle.display.split('').map((char, index) => {
-      if (char === '_') {
+    const chars = currentPuzzle.item.name.split('');
+    return chars.map((char, index) => {
+      if (index === currentPuzzle.blankIndex) {
         if (showResult && selectedAnswer) {
+          const isCorrect = selectedAnswer === currentPuzzle.missingChar;
           return (
-            <span 
-              key={index} 
-              className={`inline-block w-12 h-12 mx-1 rounded-lg flex items-center justify-center text-2xl font-bold ${
-                selectedAnswer === currentPuzzle.missingChar 
-                  ? 'bg-green-400 text-white' 
-                  : 'bg-red-400 text-white'
+            <span
+              key={index}
+              className={`inline-flex w-14 h-14 mx-1 rounded-2xl items-center justify-center text-3xl font-bold shadow-md transition-all ${
+                isCorrect
+                  ? 'bg-gradient-to-br from-green-400 to-emerald-500 text-white ring-4 ring-green-200 scale-110'
+                  : 'bg-gradient-to-br from-red-400 to-rose-500 text-white'
               }`}
             >
-              {selectedAnswer}
+              {isCorrect ? selectedAnswer : currentPuzzle.missingChar}
             </span>
           );
         }
         return (
-          <span 
-            key={index} 
-            className="inline-block w-12 h-12 mx-1 bg-gray-200 rounded-lg flex items-center justify-center text-2xl font-bold text-gray-500"
+          <span
+            key={index}
+            className="inline-flex w-14 h-14 mx-1 bg-yellow-100 border-3 border-dashed border-amber-400 rounded-2xl items-center justify-center text-3xl font-bold text-amber-600 animate-pulse"
           >
             ?
           </span>
         );
       }
       return (
-        <span 
-          key={index} 
-          className="inline-block w-12 h-12 mx-1 bg-blue-400 text-white rounded-lg flex items-center justify-center text-2xl font-bold"
+        <span
+          key={index}
+          className="inline-flex w-14 h-14 mx-1 bg-gradient-to-br from-blue-400 to-indigo-500 text-white rounded-2xl items-center justify-center text-3xl font-bold shadow-md"
         >
           {char}
         </span>
@@ -446,18 +166,28 @@ function Game2Content() {
   };
 
   if (gameComplete) {
-    const totalCount = filteredPuzzles.length;
+    const totalCount = puzzles.length;
     const correctCount = score;
     const percent = Math.round((correctCount / Math.max(totalCount, 1)) * 100);
-    const medal = percent >= 90 ? '🥇' : percent >= 70 ? '🥈' : percent >= 50 ? '🥉' : '🎖️';
+    const medal =
+      percent >= 90
+        ? '🥇'
+        : percent >= 70
+        ? '🥈'
+        : percent >= 50
+        ? '🥉'
+        : '🎖️';
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gradient-to-br from-green-100 to-blue-100">
         <div className="bg-white rounded-3xl p-8 shadow-2xl text-center max-w-md w-full">
           <div className="text-6xl mb-4">{medal}</div>
-          <h2 className="text-3xl font-bold text-blue-800 mb-4">게임 완료!</h2>
+          <h2 className="text-3xl font-bold text-blue-800 mb-4 font-kids-jua">
+            참 잘했어요! 🎉
+          </h2>
           <div className="space-y-2 mb-6">
             <p className="text-xl text-blue-700">
-              총 <span className="font-bold">{totalCount}</span>문제 중, <span className="font-bold">{correctCount}</span>문제를 맞혔어요!
+              총 <span className="font-bold">{totalCount}</span>문제 중,{' '}
+              <span className="font-bold">{correctCount}</span>문제를 맞혔어요!
             </p>
             <p className="text-2xl font-bold text-blue-800">
               점수: <span className="text-green-600">{percent}</span> / 100
@@ -465,16 +195,22 @@ function Game2Content() {
           </div>
           <div className="flex flex-col gap-4">
             <button
-              onClick={handleRestart}
-              className="bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-bold py-4 px-6 rounded-2xl text-lg shadow-lg transform hover:scale-105 transition-all duration-200"
+              onClick={initGame}
+              className="bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-bold py-4 px-6 rounded-2xl text-lg shadow-lg transform hover:scale-105 transition-all duration-200 cursor-pointer"
             >
-              다시 하기
+              🔄 새로운 문제로 다시 하기
             </button>
+            <Link
+              href="/category-select?game=2"
+              className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-bold py-4 px-6 rounded-2xl text-lg shadow-lg transform hover:scale-105 transition-all duration-200 text-center"
+            >
+              📚 다른 주제 고르기
+            </Link>
             <Link
               href="/"
               className="bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 text-white font-bold py-4 px-6 rounded-2xl text-lg shadow-lg transform hover:scale-105 transition-all duration-200 text-center"
             >
-              홈으로 가기
+              🏠 홈으로 가기
             </Link>
           </div>
         </div>
@@ -483,54 +219,82 @@ function Game2Content() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gradient-to-br from-green-100 to-blue-100">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 bg-gradient-to-br from-green-100 to-blue-100">
       {/* 효과음 */}
       <audio ref={correctSoundRef} src="/good.m4a" preload="auto" />
       <audio ref={wrongSoundRef} src="/wrong.m4a" preload="auto" />
-      {/* 진행 상황 */}
-      <div className="mb-6 text-center">
-        <div className="text-lg text-blue-700 font-medium">
-          {currentPuzzleIndex + 1} / {filteredPuzzles.length}
+
+      {/* 상단 진행 상황 */}
+      <div className="mb-5 text-center w-full max-w-md">
+        <div className="flex items-center justify-between text-blue-700 font-bold mb-1.5 px-2">
+          <span className="bg-white/80 px-3 py-1 rounded-full text-sm shadow-sm">
+            {currentPuzzle.item.emoji} {currentPuzzle.item.category}
+          </span>
+          <span className="text-lg">
+            {currentPuzzleIndex + 1} / {puzzles.length}
+          </span>
+          <span className="bg-white/80 px-3 py-1 rounded-full text-sm shadow-sm text-emerald-600">
+            ⭐ {score}점
+          </span>
         </div>
-        <div className="w-64 bg-blue-200 rounded-full h-3 mt-2">
-          <div 
+        <div className="w-full bg-blue-200 rounded-full h-3 overflow-hidden shadow-inner">
+          <div
             className="bg-gradient-to-r from-green-400 to-blue-500 h-3 rounded-full transition-all duration-300"
-            style={{ width: `${((currentPuzzleIndex + 1) / filteredPuzzles.length) * 100}%` }}
-          ></div>
+            style={{
+              width: `${((currentPuzzleIndex + 1) / puzzles.length) * 100}%`
+            }}
+          />
         </div>
       </div>
 
-      {/* 게임 영역 */}
-      <div className="bg-white rounded-3xl p-8 shadow-2xl text-center w-full max-w-none game-card">
-        {/* 좌측: 아이템 그림/글자 */}
-        <div className="game-visual mb-8">
-          <div className="text-8xl mb-4 emoji-visual">{currentPuzzle.emoji}</div>
-          <p className="text-xl text-blue-600 font-medium mb-4">
-            이 {currentPuzzle.category}의 빈칸에 들어갈 글자를 찾아보세요!
-          </p>
-          <div className="mb-8 flex justify-center items-center">
-            <div className="flex items-center">
-              {renderDisplayText()}
-            </div>
+      {/* 게임 카드 영역 */}
+      <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl text-center w-full max-w-xl game-card">
+        {/* 좌측: 실제 웹 사진 + 빈칸 단어 타일 */}
+        <div className="game-visual mb-6 flex flex-col items-center">
+          <WordVisual item={currentPuzzle.item} size="md" />
+
+          <div className="mt-4 flex items-center justify-center gap-2">
+            <p className="text-lg text-blue-700 font-bold font-kids-jua">
+              빈칸에 들어갈 글자를 찾아보세요!
+            </p>
+            <button
+              type="button"
+              onClick={() => speakKorean(currentPuzzle.item.name, 0.85)}
+              className="bg-blue-100 hover:bg-blue-200 text-blue-700 text-xs sm:text-sm font-bold px-3 py-1 rounded-full transition-colors cursor-pointer"
+              title="단어 소리 듣기"
+            >
+              🔊 단어 듣기
+            </button>
+          </div>
+
+          <div className="mt-4 flex justify-center items-center flex-wrap gap-y-2">
+            {renderDisplayText()}
           </div>
         </div>
 
-        {/* 우측: 선택지 + 결과 + 다음 */}
-        <div className="game-interact">
-          <div className="grid grid-cols-3 gap-4 mb-6 options-grid-portrait">
-            {shuffledOptions.map((option, index) => {
-            let buttonClass = "bg-gradient-to-r from-blue-400 to-green-500 hover:from-blue-500 hover:to-green-600 text-white font-bold py-4 px-4 rounded-2xl text-lg shadow-lg transform hover:scale-105 transition-all duration-200";
-            
-            if (showResult) {
-              if (option === currentPuzzle.missingChar) {
-                buttonClass = "bg-gradient-to-r from-green-400 to-green-500 text-white font-bold py-4 px-4 rounded-2xl text-lg shadow-lg";
-              } else if (option === selectedAnswer && option !== currentPuzzle.missingChar) {
-                buttonClass = "bg-gradient-to-r from-red-400 to-red-500 text-white font-bold py-4 px-4 rounded-2xl text-lg shadow-lg";
-              } else {
-                buttonClass = "bg-gray-300 text-gray-500 font-bold py-4 px-4 rounded-2xl text-lg shadow-lg";
+        {/* 우측: 글자 선택지 + 결과 + 다음 */}
+        <div className="game-interact flex flex-col justify-center">
+          <div className="grid grid-cols-2 gap-3.5 mb-6">
+            {currentPuzzle.options.map((option, index) => {
+              let buttonClass =
+                'bg-gradient-to-r from-blue-400 to-teal-500 hover:from-blue-500 hover:to-teal-600 text-white font-bold py-4 px-4 rounded-2xl text-2xl shadow-lg transform hover:scale-105 transition-all duration-200 cursor-pointer';
+
+              if (showResult) {
+                if (option === currentPuzzle.missingChar) {
+                  buttonClass =
+                    'bg-gradient-to-r from-green-400 to-emerald-500 text-white font-bold py-4 px-4 rounded-2xl text-2xl shadow-lg ring-4 ring-green-200 scale-105';
+                } else if (
+                  option === selectedAnswer &&
+                  option !== currentPuzzle.missingChar
+                ) {
+                  buttonClass =
+                    'bg-gradient-to-r from-red-400 to-rose-500 text-white font-bold py-4 px-4 rounded-2xl text-2xl shadow-lg';
+                } else {
+                  buttonClass =
+                    'bg-gray-200 text-gray-400 font-bold py-4 px-4 rounded-2xl text-2xl';
+                }
               }
-            }
-              
+
               return (
                 <button
                   key={index}
@@ -546,19 +310,29 @@ function Game2Content() {
 
           {/* 결과 표시 */}
           {showResult && (
-            <div className="mb-6">
+            <div className="mb-5 bg-blue-50/80 rounded-2xl p-4 border border-blue-100">
               {selectedAnswer === currentPuzzle.missingChar ? (
-                <div className="text-2xl text-green-600 font-bold">
+                <div className="text-2xl text-green-600 font-bold font-kids-jua">
                   정답이에요! 🎉
                 </div>
               ) : (
-                <div className="text-2xl text-red-600 font-bold">
-                  아쉬워요! 정답은 &ldquo;{currentPuzzle.missingChar}&rdquo;이에요! 😊
+                <div className="text-xl text-red-600 font-bold font-kids-jua">
+                  아쉬워요! 정답은 &ldquo;{currentPuzzle.missingChar}&rdquo;이에요 😊
                 </div>
               )}
-              <div className="text-lg text-blue-600 mt-2">
-                완성된 단어: <span className="font-bold">{currentPuzzle.name}</span>
+              <div className="text-lg text-blue-700 mt-1">
+                완성된 단어:{' '}
+                <span className="font-bold text-xl">
+                  {currentPuzzle.item.name}
+                </span>
               </div>
+              <button
+                type="button"
+                onClick={() => speakKorean(currentPuzzle.item.name, 0.85)}
+                className="mt-2 inline-flex items-center gap-1.5 text-sm font-bold text-blue-700 bg-white px-3.5 py-1.5 rounded-full shadow-sm hover:bg-blue-100 cursor-pointer"
+              >
+                🔊 &ldquo;{currentPuzzle.item.name}&rdquo; 발음 다시 듣기
+              </button>
             </div>
           )}
 
@@ -566,9 +340,11 @@ function Game2Content() {
           {showResult && (
             <button
               onClick={handleNext}
-              className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold py-4 px-8 rounded-2xl text-lg shadow-lg transform hover:scale-105 transition-all duration-200"
+              className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold py-4 px-8 rounded-2xl text-xl shadow-lg transform hover:scale-105 transition-all duration-200 cursor-pointer"
             >
-              {currentPuzzleIndex < filteredPuzzles.length - 1 ? '다음 문제' : '결과 보기'}
+              {currentPuzzleIndex < puzzles.length - 1
+                ? '다음 문제 →'
+                : '결과 보기 🏆'}
             </button>
           )}
         </div>
@@ -578,16 +354,15 @@ function Game2Content() {
       <div className="mt-6 flex gap-4">
         <Link
           href="/category-select?game=2"
-          className="text-blue-600 hover:text-blue-800 font-medium text-lg"
+          className="text-blue-700 hover:text-blue-900 font-bold text-base bg-white/70 px-4 py-2 rounded-full shadow-sm"
         >
           ← 카테고리 선택
         </Link>
-        <span className="text-blue-400">|</span>
         <Link
           href="/"
-          className="text-blue-600 hover:text-blue-800 font-medium text-lg"
+          className="text-blue-700 hover:text-blue-900 font-bold text-base bg-white/70 px-4 py-2 rounded-full shadow-sm"
         >
-          홈으로 가기
+          🏠 홈으로 가기
         </Link>
       </div>
     </div>
@@ -596,11 +371,13 @@ function Game2Content() {
 
 export default function Game2() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-2xl">로딩 중...</div>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-2xl">로딩 중...</div>
+        </div>
+      }
+    >
       <Game2Content />
     </Suspense>
   );
