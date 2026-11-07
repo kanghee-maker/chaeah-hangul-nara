@@ -208,7 +208,7 @@ function HomeContent() {
           >
             ✏️ 빈칸 채우기
             <div className="text-sm font-normal mt-1 opacity-90">
-              그림과 소리를 듣고 단어의 빈칸 글자를 찾아보세요!
+              그림을 보고 단어의 빈칸 글자를 찾아보세요!
             </div>
           </Link>
 
@@ -218,7 +218,7 @@ function HomeContent() {
           >
             📖 그림 단어장
             <div className="text-sm font-normal mt-1 opacity-90">
-              9가지 주제 132개 그림 카드를 누르며 한글 발음을 들어보세요!
+              9가지 주제 132개 그림 카드로 한글 단어를 익혀보세요!
             </div>
           </Link>
         </div>

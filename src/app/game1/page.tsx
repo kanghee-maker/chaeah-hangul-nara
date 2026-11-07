@@ -7,8 +7,7 @@ import {
   WORDS,
   WordItem,
   shuffleArray,
-  generateNameOptions,
-  speakKorean
+  generateNameOptions
 } from '@/data/words';
 import WordVisual from '@/components/WordVisual';
 
@@ -90,11 +89,6 @@ function Game1Content() {
     } else {
       playWrongSound();
     }
-
-    // 잠시 후 단어 발음 읽어주기
-    setTimeout(() => {
-      speakKorean(currentItem.name);
-    }, 350);
   };
 
   const handleNext = () => {
@@ -211,21 +205,11 @@ function Game1Content() {
             이 그림의 이름은 무엇일까요?
           </p>
 
-          {/* 친절한 힌트 & 음성 듣기 버튼 */}
-          <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
+          {/* 친절한 힌트 */}
+          <div className="mt-2 flex flex-wrap items-center justify-center">
             <span className="text-sm text-purple-600 bg-purple-50 px-3 py-1.5 rounded-full">
               💡 {currentItem.hint}
             </span>
-            <button
-              type="button"
-              onClick={() =>
-                speakKorean(showResult ? currentItem.name : currentItem.hint)
-              }
-              className="bg-pink-100 hover:bg-pink-200 text-pink-700 text-sm font-bold px-3 py-1.5 rounded-full transition-colors cursor-pointer flex items-center gap-1"
-              title="소리로 듣기"
-            >
-              🔊 {showResult ? '단어 듣기' : '힌트 듣기'}
-            </button>
           </div>
         </div>
 
@@ -277,13 +261,6 @@ function Game1Content() {
                   아쉬워요! 정답은 &ldquo;{currentItem.name}&rdquo;이에요 😊
                 </div>
               )}
-              <button
-                type="button"
-                onClick={() => speakKorean(currentItem.name, 0.85)}
-                className="mt-2 inline-flex items-center gap-1.5 text-sm font-bold text-purple-700 bg-white px-3.5 py-1.5 rounded-full shadow-sm hover:bg-purple-100 cursor-pointer"
-              >
-                🔊 &ldquo;{currentItem.name}&rdquo; 발음 다시 듣기
-              </button>
             </div>
           )}
 

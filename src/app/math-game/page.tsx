@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { shuffleArray, speakKorean } from '@/data/words';
+import { shuffleArray } from '@/data/words';
 
 interface CountingTheme {
   name: string;
@@ -27,30 +27,6 @@ const COUNTING_THEMES: CountingTheme[] = [
   { name: '나비', unit: '마리', emoji: '🦋', image: '/words/butterfly.jpg' },
   { name: '자동차', unit: '대', emoji: '🚗', image: '/words/car.jpg' },
   { name: '곰인형', unit: '개', emoji: '🧸', image: '/words/teddy_bear.jpg' }
-];
-
-const KOREAN_COUNT_WORDS = [
-  '',
-  '하나',
-  '둘',
-  '셋',
-  '넷',
-  '다섯',
-  '여섯',
-  '일곱',
-  '여덟',
-  '아홉',
-  '열',
-  '열하나',
-  '열둘',
-  '열셋',
-  '열넷',
-  '열다섯',
-  '열여섯',
-  '열일곱',
-  '열여덟',
-  '열아홉',
-  '스물'
 ];
 
 interface MathProblem {
@@ -189,23 +165,6 @@ function MathGameContent() {
     }
   };
 
-  const getQuestionSpeech = (p: MathProblem) => {
-    if (p.blankPos === 'b') {
-      return p.op === '+'
-        ? `${p.a} 더하기 몇은 ${p.result}일까요?`
-        : `${p.a} 빼기 몇은 ${p.result}일까요?`;
-    }
-    return p.op === '+'
-      ? `${p.theme.name} ${p.a}${p.theme.unit} 더하기 ${p.b}${p.theme.unit}는 모두 몇 ${p.theme.unit}일까요?`
-      : `${p.theme.name} ${p.a}${p.theme.unit}에서 ${p.b}${p.theme.unit}를 빼면 몇 ${p.theme.unit}가 남을까요?`;
-  };
-
-  const getAnswerSpeech = (p: MathProblem) => {
-    return p.op === '+'
-      ? `${p.a} 더하기 ${p.b}는 ${p.result}!`
-      : `${p.a} 빼기 ${p.b}는 ${p.result}!`;
-  };
-
   const handleSelect = (option: number) => {
     if (showResult || !current) return;
     setSelectedAnswer(option);
@@ -217,10 +176,6 @@ function MathGameContent() {
     } else {
       playWrongSound();
     }
-
-    setTimeout(() => {
-      speakKorean(getAnswerSpeech(current), 0.9);
-    }, 350);
   };
 
   const handleNext = () => {
@@ -236,8 +191,6 @@ function MathGameContent() {
 
   const handleTapCountItem = (num: number) => {
     setCountedIndex(num);
-    const word = KOREAN_COUNT_WORDS[num] || String(num);
-    speakKorean(word, 1.0);
   };
 
   if (problems.length === 0 || !current) {
@@ -303,7 +256,7 @@ function MathGameContent() {
     );
   }
 
-  // 시각적 아이템 렌더링 (그림을 누르면 하나, 둘, 셋 세어줌!)
+  // 시각적 아이템 렌더링
   const renderVisualCounting = () => {
     const { op, a, b, theme } = current;
 
@@ -370,13 +323,13 @@ function MathGameContent() {
                 );
               })}
               <div className="w-full text-center text-xs font-bold text-pink-700 mt-1">
-                { current.blankPos === 'b' && !showResult ? '?' : b }
+                {current.blankPos === 'b' && !showResult ? '?' : b}
                 {theme.unit}
               </div>
             </div>
           </div>
           <p className="text-xs sm:text-sm text-indigo-500 font-medium">
-            👆 그림을 하나씩 터치하면 &ldquo;하나, 둘, 셋&rdquo; 소리로 세어줘요!
+            그림을 하나씩 세어보며 정답을 찾아보세요!
           </p>
         </div>
       );
@@ -426,7 +379,7 @@ function MathGameContent() {
           </div>
         </div>
         <p className="text-xs sm:text-sm text-indigo-500 font-medium">
-          👆 남아있는 그림을 하나씩 터치하며 세어보세요!
+          남아있는 그림이 몇 개인지 세어보세요!
         </p>
       </div>
     );
@@ -521,17 +474,6 @@ function MathGameContent() {
                 {current.result}
               </div>
             )}
-          </div>
-
-          {/* 문제 소리 듣기 버튼 */}
-          <div className="mt-4">
-            <button
-              type="button"
-              onClick={() => speakKorean(getQuestionSpeech(current), 0.9)}
-              className="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 text-sm font-bold px-4 py-1.5 rounded-full transition-colors cursor-pointer inline-flex items-center gap-1.5"
-            >
-              🔊 문제 소리로 듣기
-            </button>
           </div>
         </div>
 

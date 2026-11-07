@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { CATEGORY_LIST, WORDS, speakKorean } from '@/data/words';
+import { CATEGORY_LIST, WORDS } from '@/data/words';
 import WordVisual from '@/components/WordVisual';
 
 export default function WordsBookPage() {
@@ -26,7 +26,7 @@ export default function WordsBookPage() {
             📖 채아의 그림 단어장
           </h1>
           <p className="text-purple-600 text-sm sm:text-base mt-1">
-            카드를 누르면 한글 발음과 설명을 들을 수 있어요! (총 {WORDS.length}개 단어)
+            9가지 주제의 생생한 사진과 한글 단어를 함께 배워보세요! (총 {WORDS.length}개 단어)
           </p>
         </div>
         <Link
@@ -70,16 +70,12 @@ export default function WordsBookPage() {
         {filteredWords.map(item => (
           <div
             key={item.id}
-            onClick={() => speakKorean(`${item.name}. ${item.hint}`, 0.9)}
-            className="bg-white rounded-3xl p-5 shadow-lg hover:shadow-2xl border-2 border-purple-100 hover:border-pink-300 transition-all duration-200 flex flex-col items-center text-center cursor-pointer group"
+            className="bg-white rounded-3xl p-5 shadow-lg hover:shadow-xl border-2 border-purple-100 transition-all duration-200 flex flex-col items-center text-center"
           >
             <WordVisual item={item} size="md" />
             <div className="mt-4 flex items-center gap-2">
               <span className="text-2xl font-bold text-purple-900 font-kids-jua">
                 {item.name}
-              </span>
-              <span className="bg-pink-100 group-hover:bg-pink-200 text-pink-700 text-xs font-bold px-2.5 py-1 rounded-full transition-colors">
-                🔊 듣기
               </span>
             </div>
             <p className="text-xs sm:text-sm text-gray-600 mt-1.5 leading-snug">

@@ -7,8 +7,7 @@ import {
   WORDS,
   WordItem,
   shuffleArray,
-  generateBlankPuzzle,
-  speakKorean
+  generateBlankPuzzle
 } from '@/data/words';
 import WordVisual from '@/components/WordVisual';
 
@@ -100,10 +99,6 @@ function Game2Content() {
     } else {
       playWrongSound();
     }
-
-    setTimeout(() => {
-      speakKorean(currentPuzzle.item.name);
-    }, 350);
   };
 
   const handleNext = () => {
@@ -253,18 +248,10 @@ function Game2Content() {
         <div className="game-visual mb-6 flex flex-col items-center">
           <WordVisual item={currentPuzzle.item} size="md" />
 
-          <div className="mt-4 flex items-center justify-center gap-2">
+          <div className="mt-4 flex items-center justify-center">
             <p className="text-lg text-blue-700 font-bold font-kids-jua">
               빈칸에 들어갈 글자를 찾아보세요!
             </p>
-            <button
-              type="button"
-              onClick={() => speakKorean(currentPuzzle.item.name, 0.85)}
-              className="bg-blue-100 hover:bg-blue-200 text-blue-700 text-xs sm:text-sm font-bold px-3 py-1 rounded-full transition-colors cursor-pointer"
-              title="단어 소리 듣기"
-            >
-              🔊 단어 듣기
-            </button>
           </div>
 
           <div className="mt-4 flex justify-center items-center flex-wrap gap-y-2">
@@ -326,13 +313,6 @@ function Game2Content() {
                   {currentPuzzle.item.name}
                 </span>
               </div>
-              <button
-                type="button"
-                onClick={() => speakKorean(currentPuzzle.item.name, 0.85)}
-                className="mt-2 inline-flex items-center gap-1.5 text-sm font-bold text-blue-700 bg-white px-3.5 py-1.5 rounded-full shadow-sm hover:bg-blue-100 cursor-pointer"
-              >
-                🔊 &ldquo;{currentPuzzle.item.name}&rdquo; 발음 다시 듣기
-              </button>
             </div>
           )}
 
